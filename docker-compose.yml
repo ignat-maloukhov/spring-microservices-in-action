@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  license-service:
+    container_name: license-service
+    build:
+      context: license-service
+      dockerfile: Dockerfile
+    image: microservices-in-action/license-service
+    ports:
+      - "8000:8080"
