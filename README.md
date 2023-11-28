@@ -7,3 +7,10 @@
 
 Микросервисы запускаются в контейнерах Docker, подробнее об этом можно прочитать в статье [Dockerizing a Spring Boot Application
 ](https://www.baeldung.com/dockerizing-spring-boot-application).
+
+Ссылки:
+1. [https://www.baeldung.com/maven-multi-module](Multi-Module Project with Maven)
+2. [https://xinghua24.github.io/SpringBoot/Spring-Boot-RestController/](Spring Boot - Rest Controller)
+2. [https://dzone.com/articles/how-spring-mvc-really-works](How Spring MVC Really Works)
+3. [https://www.marcobehler.com/guides/spring-mvc](What is Spring MVC: @Controllers & @RestControllers)
+4. [https://www.baeldung.com/spring-rest-openapi-documentation](Documenting a Spring REST API Using OpenAPI 3.0)
