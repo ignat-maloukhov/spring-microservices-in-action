@@ -1,27 +1,26 @@
 package demo.ignat.licenseservice.controller;
 
+import demo.ignat.licenseservice.exception.LicenseNotFoundException;
 import demo.ignat.licenseservice.model.License;
-import demo.ignat.licenseservice.service.LicenseService;
+import demo.ignat.licenseservice.service.LicenseExpiredDateGenerator;
+import demo.ignat.licenseservice.service.LicensePriceGenerator;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Locale;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.UUID;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/v1/license")
 public class LicenseController {
-
-    public LicenseController(LicenseService licenseService) {
-        this.licenseService = licenseService;
-    }
 
     private final LicenseService licenseService;
 
     /**
-     * Проверяет работоспособность endpoint "api/v1/license".
+     * Проверяет работоспособность endpoint "/api/v1/license".
      * Пример использования: localhost:8080/api/v1/license/health
      *
      * @return объект ResponseEntity<String> с кодом ответа
@@ -31,34 +30,67 @@ public class LicenseController {
         return ResponseEntity.ok("api is alive");
     }
 
-    @RequestMapping(value = "/license/{licenseId}", method = RequestMethod.GET)
-    public ResponseEntity<License> getLicense(@PathVariable("organizationId") String organizationId,
-                                              @PathVariable("licenseId") String licenseId) {
 
-        License license = licenseService.getLicense(licenseId, organizationId);
-        license.add(
-                linkTo(methodOn(LicenseController.class).getLicense(organizationId, license.getLicenseId())).withSelfRel(),
-                linkTo(methodOn(LicenseController.class).createLicense(organizationId, license, null)).withRel("createLicense"),
-                linkTo(methodOn(LicenseController.class).updateLicense(organizationId, license)).withRel("updateLicense"),
-                linkTo(methodOn(LicenseController.class).deleteLicense(organizationId, license.getLicenseId())).withRel("deleteLicense")
-        );
-
+    /**
+     * Создает новую лицензию
+     *
+     * @param type                 - тип лицензии
+     * @param expiredDateGenerator - генератор срока действия лицензии
+     * @param priceGenerator       - генератор цены лицензии
+     * @return - объект License
+     */
+    @PostMapping()
+    public ResponseEntity<License> generateLicense(License.Type type,
+                                                   LicenseExpiredDateGenerator expiredDateGenerator,
+                                                   LicensePriceGenerator priceGenerator) {
+        var expiredDate = expiredDateGenerator.generate();
+        var price = priceGenerator.generate();
+        var license = licenseService.generate(type);
         return ResponseEntity.ok(license);
     }
 
+
+    /**
+     * Возвращает объект лицензии по id
+     *
+     * @param id - идентификатор лицензии
+     * @return - объект License
+     * @throws LicenseNotFoundException
+     */
+
+    @GetMapping()
+    public ResponseEntity<License> getLicense(@RequestParam("id") UUID id) throws LicenseNotFoundException {
+
+        var license = licenseService.get(id);
+        return ResponseEntity.ok(license);
+    }
+
+    /**
+     * Изменяет лицензию
+     *
+     * @param id - идентификатор лицензии
+     * @return - объект License
+     * @throws LicenseNotFoundException
+     */
     @PutMapping()
-    public ResponseEntity<String> updateLicense(@PathVariable("organizationId") String organizationId, @RequestBody License request) {
-        return ResponseEntity.ok(licenseService.updateLicense(request, organizationId));
+    public ResponseEntity<License> updateLicense(@RequestParam("id") UUID id) throws LicenseNotFoundException {
+
+        var license = licenseService.update(id);
+        return ResponseEntity.ok(license);
     }
 
-    @PostMapping()
-    public ResponseEntity<String> createLicense(@PathVariable("organizationId") String organizationId, @RequestBody License request,
-                                                @RequestHeader(value = "Accept-Language", required = false) Locale locale) {
-        return ResponseEntity.ok(licenseService.createLicense(request, organizationId, locale));
+    /**
+     * Удаляет текущую лицензию
+     *
+     * @param id - идентификатор лицензии
+     * @return - объект License, которая была удалена
+     * @throws LicenseNotFoundException
+     */
+    @DeleteMapping()
+    public ResponseEntity<License> deleteLicense(@RequestParam("id") UUID id) throws LicenseNotFoundException {
+
+        var license = licenseService.delete(id);
+        return ResponseEntity.ok(license);
     }
 
-    @DeleteMapping(value = "/license/{licenseId}")
-    public ResponseEntity<String> deleteLicense(@PathVariable("organizationId") String organizationId, @PathVariable("licenseId") String licenseId) {
-        return ResponseEntity.ok(licenseService.deleteLicense(licenseId, organizationId));
-    }
 }

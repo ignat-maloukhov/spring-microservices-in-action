@@ -11,55 +11,12 @@
 
     <artifactId>license-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>License Service</name>
+    <name>license-microservice</name>
+    <description>License Service</description>
     <packaging>jar</packaging>
 
     <properties>
-        <java.version>17</java.version>
-        <docker.image.prefix>microservices-in-action</docker.image.prefix>
+        <spring-boot.build-image.imageName>${parent.artifactId}-${project.artifactId}</spring-boot.build-image.imageName>
     </properties>
 
-    <!--
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <image>
-                        <name>${docker.image.prefix}/${project.artifactId}:latest</name>
-                    </image>
-                    <layers>
-                        <enabled>true</enabled>
-                    </layers>
-                </configuration>
-            </plugin>
-            -->
-            <!-- This plugin is used to create a docker image and publish the image to docker hub-->
-           <!--
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>dockerfile-maven-plugin</artifactId>
-                <version>1.4.13</version>
-                <configuration>
-                    <repository>${docker.image.prefix}/${project.artifactId}</repository>
-                    <tag>${project.version}</tag>
-                    <buildArgs>
-                        <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
-                    </buildArgs>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>default</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>build</goal>
-                            <goal>push</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
--->
 </project>

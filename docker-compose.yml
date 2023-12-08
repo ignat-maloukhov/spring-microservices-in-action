@@ -8,4 +8,13 @@ services:
       dockerfile: Dockerfile
     image: microservices-in-action/license-service
     ports:
-      - "8000:8080"
+      - "8080:8080"
+
+  configservice:
+    container_name: configserver
+    build:
+      context: configserver
+      dockerfile: Dockerfile
+    image: microservices-in-action/configserver
+    ports:
+      - "8081:8081"

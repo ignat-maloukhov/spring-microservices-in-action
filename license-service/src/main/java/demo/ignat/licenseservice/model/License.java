@@ -1,20 +1,18 @@
 package demo.ignat.licenseservice.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import org.springframework.hateoas.RepresentationModel;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.UUID;
 
-@Getter
-@Setter
-@ToString
-public class License extends RepresentationModel<License> {
+public record License(UUID id,
+                      Type type,
+                      LocalDate issued,
+                      LocalDate expired,
+                      BigDecimal price) {
 
-    private int id;
-    private String licenseId;
-    private String description;
-    private String organizationId;
-    private String productName;
-    private String licenseType;
+    public enum Type {
+        STANDARD,
+        UNLIMITED
 
+    }
 }
